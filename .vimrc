@@ -29,6 +29,7 @@ Plugin 'tpope/vim-fugitive'	    " amazing plugin for git integration
 Plugin 'jiangmiao/auto-pairs'   " auto pairs for brackets
 Plugin 'altercation/vim-colors-solarized' " themes
 Plugin 'octol/vim-cpp-enhanced-highlight'
+Plugin 'scrooloose/syntastic'
 
 "--------------=== Snippets support ===---------------
 Plugin 'garbas/vim-snipmate'		" Snippets manager
