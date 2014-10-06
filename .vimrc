@@ -26,6 +26,7 @@ Plugin 'tpope/vim-surround'	   	" Parentheses, brackets, quotes, XML tags, and m
 Plugin 'tpope/vim-commentary'	" Enchanced comments
 Plugin 'tpope/vim-abolish'	    " nice plugins to test fixing
 Plugin 'tpope/vim-fugitive'	    " amazing plugin for git integration
+Plugin 'tpope/vim-unimpaired'   " Quickfix bindings
 Plugin 'jiangmiao/auto-pairs'   " auto pairs for brackets
 Plugin 'altercation/vim-colors-solarized' " themes
 Plugin 'octol/vim-cpp-enhanced-highlight'
@@ -53,6 +54,8 @@ filetype plugin indent on
 "=====================================================
 " General settings
 "=====================================================
+
+
 set backspace=indent,eol,start
 aunmenu Help.
 aunmenu Window.
@@ -168,7 +171,7 @@ function! Ranger()
     " Get a temp file name without creating it
     let tmpfile = substitute(system('mktemp -u'), '\n', '', '')
     let cwd = getcwd()
-    silent exec '!python ~/tools/ranger/ranger.py --choosefile='.tmpfile.' '.cwd
+    silent exec '!ranger --choosefile='.tmpfile.' '.cwd
     " If the temp file has been written by ranger
     if filereadable(tmpfile)
         " Get the selected file name from the temp file

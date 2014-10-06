@@ -18,3 +18,5 @@ alias ll='ls -la --color'
 setopt autopushd
 
 source $ZSH/oh-my-zsh.sh
+
+xrdb -merge ~/.Xdefaults 
