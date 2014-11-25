@@ -1,0 +1,11 @@
+bind stage 1 stage-update-line    #Stage a single line
+bind main B !git rebase -i %(commit) # Interactive rebase
+bind main ! !git revert %(commit) # revert
+bind refs n !@git branch "%(prompt Enter branch name: )" # create new branch
+bind generic + !git commit --amend # amend last
+bind stash D !?git stash drop %(stash) # drop current stash
+bind stash A !?git stash apply %(stash) # apply selected stash
+bind status D !@?rm %(file) #delete selected file
+bind main T !@git tag "%(prompt Enter new tag: )" %(commit) # tag commit
+bind status P !git add --patch %(file) # patch file
+bind generic T !git notes edit %(commit) # add notes for file
