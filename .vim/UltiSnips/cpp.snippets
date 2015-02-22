@@ -30,4 +30,70 @@ snippet temp "template <typename ..> (template)"
 template <${1:typename} ${2:_InputIter}>
 endsnippet
 
+snippet cast "Static Cast"
+static_cast<${1}>(${2})${0}
+endsnippet
+
+snippet cast "Reinterpret Cast"
+reinterpret_cast<${1}>(${2})${0}
+endsnippet
+
+snippet cast "Dynamic Cast"
+dynamic_cast<${1}>(${2})${0}
+endsnippet
+
+snippet cast "Const Cast"
+const_cast<${1}>(${2})${0}
+endsnippet
+
+# Pragmas for MSVC
+snippet opt "Unoptimize region start"
+#pragma optimize( "", off )${0}
+endsnippet
+
+snippet opt "Unoptimize region end"
+#pragma optimize( "", on )${0}
+endsnippet
+
+snippet dtor "destructor"
+virtual ~${1:`!p snip.rv = snip.basename`}();${0}
+endsnippet
+
+snippet ruleof3 "Copy ctor and copy assignment for Rule of three"
+private:
+	// Private and unimplemented to forbid use.
+	${1:`!p snip.rv = snip.basename`}(const $1&);${0}
+	$1& operator=(const $1&);
+endsnippet
+
+snippet for "std::iterator for-each loop"
+for (${1:vector<T>}::iterator i = ${2:items.}begin(); i != ${2}end(); ++i) ${0}
+endsnippet
+
+snippet itera "C++-11 auto iterator"
+for (auto ${1:i} = $1.begin(); $1 != $1.end(); ++$1) {
+	${2:std::cout << *$1 << std::endl;}${0}
+}
+endsnippet
+
+snippet iter "iterator"
+for (${1:std::vector}<${2:type}>::${3:const_iterator} ${4:i} = ${5:container}.begin(); $4 != $5.end(); ++$4) {
+	${0}
+}
+endsnippet
+
+snippet mfun "member function implementations"
+${4:void} ${1:`!p snip.rv = snip.basename`}::${2:memberFunction}(${3}) {
+	${5:return};${0}
+}
+endsnippet
+
+snippet cout "cout"
+std::cout << ${1} << ${2:std::endl};
+endsnippet
+
+snippet cerr "cerr"
+std::cerr << ${1} << ${2:std::endl};
+endsnippet
+
 # vim:ft=snippets:
