@@ -8,6 +8,7 @@ export PAGER=vimpager
 # export TERM=rxvt-unicode-256color
 
 ZSH_THEME="frisk"
+plugins=(vi-mode)
 
 # Aliases
 alias tmns="tmux new-session -s"
@@ -40,4 +41,3 @@ function waitpid() {
 if [ $(tput colors) -eq "256" ]; then
     source "$HOME/.vim/bundle/gruvbox/gruvbox_256palette.sh"
 fi
-
