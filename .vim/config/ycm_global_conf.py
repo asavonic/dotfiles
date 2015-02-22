@@ -19,8 +19,6 @@ flags = [
 ]
 
 
-compilation_database_folder = ''
-
 known_databases = {}
 def GetCompilationDatabase( filename ):
     LOGGER.info('GetCompilationDatabase started')

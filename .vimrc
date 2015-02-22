@@ -16,6 +16,8 @@ Plugin 'szw/vim-ctrlspace'              " Project manager
 Plugin 'Lokaltog/vim-easymotion'        " improves movement
 Plugin 'jlanzarotta/bufexplorer'        " popup window with opened buffers
 
+Plugin 'kien/ctrlp.vim'                     " fuzzy search
+
 "---------=== Code complete ===-------------
 Plugin 'Valloric/YouCompleteMe'
 
@@ -84,6 +86,20 @@ let g:tagbar_autofocus = 1
 let g:ycm_seed_identifiers_with_syntax = 1  " collect identifiers from vim-syntax files
 let g:ycm_global_ycm_extra_conf = '~/.vim/config/ycm_global_conf.py'
 
+
+"---------=== CtrlP ===-------------
+let g:ctrlp_use_caching = 0
+if executable('ag')
+    set grepprg=ag\ --nogroup\ --nocolor
+
+    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+else
+  let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
+  let g:ctrlp_prompt_mappings = {
+    \ 'AcceptSelection("e")': ['<space>', '<cr>', '<2-LeftMouse>'],
+    \ }
+endif
+
 "=====================================================
 " Keybindings
 "=====================================================
@@ -91,3 +107,24 @@ let g:ycm_global_ycm_extra_conf = '~/.vim/config/ycm_global_conf.py'
 map <F4> :TagbarToggle<CR>
 map <C-q> :bd<CR> 	   " CTRL+Q - close current buffer
 imap jk <Esc>          " fast ESC replacement
+
+
+"---------=== Leader mappings ===-------------
+" Space mapping is awesome
+let mapleader = "\<Space>"
+" save current file
+nnoremap <Leader>w :w<CR>
+" open file using CtrlP
+nnoremap <Leader>o :CtrlP<CR>    
+
+" copy/paste from system clipboard
+vmap <Leader>y "+y
+vmap <Leader>d "+d
+nmap <Leader>p "+p
+nmap <Leader>P "+P
+vmap <Leader>p "+p
+vmap <Leader>P "+P
+
+"---------=== GoTo Declaration/Definition ===-------------
+autocmd Filetype c,cpp noremap <Leader>d :YcmCompleter GoToDeclaration<CR>
+autocmd Filetype c,cpp noremap <Leader>r :YcmCompleter GoToDefinition<CR>
