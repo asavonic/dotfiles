@@ -1,0 +1,33 @@
+priority -30
+
+extends c
+
+# We want to overwrite everything in parent ft.
+priority -29
+
+###########################################################################
+#                            TextMate Snippets                            #
+###########################################################################
+
+snippet cl "class .. (class)"
+class ${1:`!p snip.rv = snip.basename or "name"`} {
+public:
+	${1/(\w+).*/$1/}(${2:arguments});
+	~${1/(\w+).*/$1/}();
+
+${3:protected}:
+	${0:/* data */}
+};
+endsnippet
+
+snippet ns "namespace .. (namespace)"
+namespace${1/.+/ /m}${1:`!p snip.rv = snip.basename or "name"`} {
+	${VISUAL}${0}
+}${1/.+/ \/* /m}$1${1/.+/ *\/ /m}
+endsnippet
+
+snippet temp "template <typename ..> (template)"
+template <${1:typename} ${2:_InputIter}>
+endsnippet
+
+# vim:ft=snippets:

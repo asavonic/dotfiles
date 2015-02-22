@@ -17,9 +17,12 @@ Plugin 'Lokaltog/vim-easymotion'        " improves movement
 Plugin 'jlanzarotta/bufexplorer'        " popup window with opened buffers
 
 Plugin 'kien/ctrlp.vim'                     " fuzzy search
+Plugin 'mileszs/ack.vim'
 
 "---------=== Code complete ===-------------
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
 
 "---------=== Look and feel ===-------------
 Plugin 'itchyny/lightline.vim'          " minimal powerline-airline replacement
@@ -100,12 +103,20 @@ else
     \ }
 endif
 
+"---------=== Ack/Ag support ===-------------
+if executable('ag')
+    let g:ackprg = 'ag --vimgrep'
+endif
+
+"---------=== UltiSnips ===-------------
+let g:UltiSnipsSnippetDirectories=["UltiSnips"]
+
+
 "=====================================================
 " Keybindings
 "=====================================================
 
 map <F4> :TagbarToggle<CR>
-map <C-q> :bd<CR> 	   " CTRL+Q - close current buffer
 imap jk <Esc>          " fast ESC replacement
 
 
@@ -116,6 +127,8 @@ let mapleader = "\<Space>"
 nnoremap <Leader>w :w<CR>
 " open file using CtrlP
 nnoremap <Leader>o :CtrlP<CR>    
+" CTRL+Q - close current buffer
+map <Leader>q :bd<CR> 	   
 
 " copy/paste from system clipboard
 vmap <Leader>y "+y
@@ -128,3 +141,13 @@ vmap <Leader>P "+P
 "---------=== GoTo Declaration/Definition ===-------------
 autocmd Filetype c,cpp noremap <Leader>d :YcmCompleter GoToDeclaration<CR>
 autocmd Filetype c,cpp noremap <Leader>r :YcmCompleter GoToDefinition<CR>
+
+"---------=== YouCompleteMe + UltiSnips ===-------------
+autocmd Filetype c,cpp noremap <Leader>d :YcmCompleter GoToDeclaration<CR>
+" make YCM compatible with UltiSnips
+let g:ycm_key_list_select_completion=['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion=['<C-p>', '<Up>']
+
+let g:UltiSnipsExpandTrigger="<Tab>"
+let g:UltiSnipsJumpForwardTrigger="<Tab>"                                           
+let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
