@@ -142,12 +142,7 @@ vmap <Leader>P "+P
 autocmd Filetype c,cpp noremap <Leader>d :YcmCompleter GoToDeclaration<CR>
 autocmd Filetype c,cpp noremap <Leader>r :YcmCompleter GoToDefinition<CR>
 
-"---------=== YouCompleteMe + UltiSnips ===-------------
-autocmd Filetype c,cpp noremap <Leader>d :YcmCompleter GoToDeclaration<CR>
-" make YCM compatible with UltiSnips
-let g:ycm_key_list_select_completion=['<C-n>', '<Down>']
-let g:ycm_key_list_previous_completion=['<C-p>', '<Up>']
-
-let g:UltiSnipsExpandTrigger="<Tab>"
-let g:UltiSnipsJumpForwardTrigger="<Tab>"                                           
-let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
+"---------=== UltiSnips ===-------------
+let g:UltiSnipsExpandTrigger       = "<Leader>h"
+let g:UltiSnipsJumpForwardTrigger  = "<Leader>j"
+let g:UltiSnipsJumpBackwardTrigger = "<Leader>k"
