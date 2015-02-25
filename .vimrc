@@ -44,6 +44,7 @@ set backspace=indent,eol,start
 set timeoutlen=1000 ttimeoutlen=0 " fixes freeze when exiting from insert mode
 
 set nu	                  " show line numbers
+syntax on
 
 set visualbell t_vb=      " disable visual bell
 set novisualbell       
