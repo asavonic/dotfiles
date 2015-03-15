@@ -112,6 +112,8 @@ endif
 "---------=== UltiSnips ===-------------
 let g:UltiSnipsSnippetDirectories=["UltiSnips"]
 
+"---------=== BufExplorer ===-------------
+let g:bufExplorerSortBy='mru'
 
 "=====================================================
 " Keybindings
@@ -119,7 +121,6 @@ let g:UltiSnipsSnippetDirectories=["UltiSnips"]
 
 map <F4> :TagbarToggle<CR>
 imap jk <Esc>          " fast ESC replacement
-
 
 "---------=== Leader mappings ===-------------
 " Space mapping is awesome
@@ -147,3 +148,6 @@ autocmd Filetype c,cpp noremap <Leader>r :YcmCompleter GoToDefinition<CR>
 let g:UltiSnipsExpandTrigger       = "<Leader>h"
 let g:UltiSnipsJumpForwardTrigger  = "<Leader>j"
 let g:UltiSnipsJumpBackwardTrigger = "<Leader>k"
+
+"---------=== BufExplorer ===-------------
+nn gb : :BufExplorer<CR>
