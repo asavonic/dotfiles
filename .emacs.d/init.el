@@ -1,4 +1,4 @@
-;; My name and e-mail adress
+``/col;; My name and e-mail adress
 (setq user-full-name   "Andrew Savonichev")
 (setq user-mail-adress "andrew.savonichev@gmail.com")
 
@@ -29,20 +29,12 @@
 
 ;; packages
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("org" . "http://orgmode.org/elpa/")
-                        ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+                         ;; ("org" . "http://orgmode.org/elpa/")
+                         ;; ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ;; ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")
+                         ("melpa" . "http://melpa.milkbox.net/packages/")
+			 ))
 (package-initialize)
-
-
-(defun require-package (package)
-  (setq-default highlight-tabs t)
-  "Install given PACKAGE."
-  (unless (package-installed-p package)
-    (unless (assoc package package-archive-contents)
-      (package-refresh-contents))
-    (package-install package)))
 
 ;; set default font in initial window and for any new window
 (cond
@@ -65,8 +57,9 @@
  )
 
 ;; Dired
-(require 'dired)
-(setq dired-recursive-deletes 'top) ;; allows to delete not empty directories
+;; (require-package "dired")
+;; (require 'dired)
+;; (setq dired-recursive-deletes 'top) ;; allows to delete not empty directories
 
 ;; Imenu
 (require 'imenu)
@@ -83,11 +76,33 @@
   (add-to-list 'load-path unix-init-path))
 
 ;; Org-mode settings
+(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
 (require 'org)
+;;
+;; Standard key bindings
+(global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
-(global-set-key "\C-cl" 'org-store-link)
-(add-to-list 'auto-mode-alist '("\\.org$" . Org-mode)) ;; associeate *.org files with org-mode
+
+(setq org-agenda-files (quote ("~/org")))
+
+(setq org-todo-keywords
+      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+
+(setq org-todo-keyword-faces
+      (quote (("TODO" :foreground "red" :weight bold)
+              ("NEXT" :foreground "blue" :weight bold)
+              ("DONE" :foreground "forest green" :weight bold)
+              ("WAITING" :foreground "orange" :weight bold)
+              ("HOLD" :foreground "magenta" :weight bold)
+              ("CANCELLED" :foreground "forest green" :weight bold)
+              ("MEETING" :foreground "forest green" :weight bold)
+              ("PHONE" :foreground "forest green" :weight bold))))
+
+(setq org-agenda-files (list "~/org/tickets.org"
+                             "~/org/validation.org" 
+                             "~/org/env.org"))
 
 ;; Inhibit startup/splash screen
 (setq inhibit-splash-screen   t)
@@ -153,12 +168,12 @@
 (global-visual-line-mode t)
 
 ;; IDO plugin
-(require 'ido)
-(ido-mode                      t)
-(icomplete-mode                t)
-(ido-everywhere                t)
-(setq ido-vitrual-buffers      t)
-(setq ido-enable-flex-matching t)
+;; (require 'ido)
+;; (ido-mode                      t)
+;; (icomplete-mode                t)
+;; (ido-everywhere                t)
+;; tq ido-vitrual-buffers      t)
+;; tq ido-enable-flex-matching t)
 
 ;; Buffer Selection and ibuffer settings
 (require 'bs)
@@ -166,20 +181,24 @@
 (defalias 'list-buffers 'ibuffer) ;; buffer list on C-x C-b
 (global-set-key (kbd "<f2>") 'bs-show) ;; hotkey buffer selection F2
 
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(load-theme 'gruvbox t)
+
 ;; Color-theme definition
-(defun color-theme-init()
-    (require 'color-theme)
-    (color-theme-initialize)
-    (setq color-theme-is-global t)
-    ;; (gruvbox)
-)
-(if (system-is-windows)
-    (when (file-directory-p win-init-ct-path)
-        (add-to-list 'load-path win-init-ct-path)
-        (color-theme-init))
-    (when (file-directory-p unix-init-ct-path)
-        (add-to-list 'load-path unix-init-ct-path)
-        (color-theme-init)))
+;; (defun color-theme-init()
+;;  (color-theme-initialize)
+;;  (setq color-theme-is-global t)
+;;  ;; (gruvbox)
+;;  ;; (gruvbox-color-theme)
+;; )
+
+;; (if (system-is-windows)
+;;  (when (file-directory-p win-init-ct-path)
+;;      (add-to-list 'load-path win-init-ct-path)
+;;      (color-theme-init))
+;;  (when (file-directory-p unix-init-ct-path)
+;;      (add-to-list 'load-path unix-init-ct-path)
+;;      (color-theme-init)))
 
 ;; Syntax highlighting
 (require 'font-lock)
@@ -197,7 +216,7 @@
 
 ;; Scrolling settings
 (setq scroll-step 1) 
-(setq scroll-margin 10)
+;; (setq scroll-margin 10)
 (setq scroll-conservatively 10000)
 
 
@@ -288,11 +307,10 @@
 (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
 (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
 
-;; Company
-(require 'company)
-(add-hook 'after-init-hook 'global-company-mode)
-
 (require 'cc-mode)
+(require 'cmake-mode)
+(add-to-list 'auto-mode-alist '("CMakeLists\\.txt\\'" . cmake-mode))
+(add-to-list 'auto-mode-alist '("\\.cmake\\'" . cmake-mode))
 (require 'semantic)
 
 (global-semanticdb-minor-mode 1)
@@ -300,13 +318,38 @@
 
 (semantic-mode 1)
 
-;; Function args
+(require 'cedet)
+
+;; function-args
 (require 'function-args)
 (fa-config-default)
-(define-key c-mode-map  [C-Tab] 'moo-complete)
-(define-key c++-mode-map  [C-Tab] 'moo-complete)
-(define-key c-mode-map (kbd "M-o")  'fa-show)
-(define-key c++-mode-map (kbd "M-o")  'fa-show)
+(define-key c-mode-map [(tab)] 'moo-complete)
+(define-key c++-mode-map [(tab)] 'moo-complete)
+;; company
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(delete 'company-semantic company-backends)
+(define-key c-mode-map [(control tab)] 'company-complete)
+(define-key c++-mode-map [(control tab)] 'company-complete)
+;; company-c-headers
+(add-to-list 'company-backends 'company-c-headers)
+;; hs-minor-mode for folding source code
+(add-hook 'c-mode-common-hook 'hs-minor-mode)
+
+;; use helm with company
+(eval-after-load 'company
+  '(progn
+     (define-key company-mode-map (kbd "C-:") 'helm-company)
+     (define-key company-active-map (kbd "C-:") 'helm-company)))
+
+
+;; Function args
+;; (require 'function-args)
+;; (fa-config-default)
+;; (define-key c-mode-map  [C-Tab] 'moo-complete)
+;; (define-key c++-mode-map  [C-Tab] 'moo-complete)
+;; (define-key c-mode-map (kbd "M-o")  'fa-show)
+;; (define-key c++-mode-map (kbd "M-o")  'fa-show)
 
 ;; Org-mode
 (require 'org-install)
@@ -314,3 +357,85 @@
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+;; compilation
+(setq compilation-scroll-output t)
+(defun cc-goto-first-error( buffer exit-condition )
+    (with-current-buffer buffer
+                             (goto-char (point-min))
+                                 (compilation-next-error 1)))
+
+(add-to-list 'compilation-finish-functions 'cc-goto-first-error)
+(global-set-key (kbd "<f5>") 'compile) ;; hotkey
+
+(eval-after-load 'compile
+  '(progn (make-variable-buffer-local 'compile-command)
+          (make-variable-buffer-local 'compile-history)))
+
+;; helm-dash
+(setq helm-dash-docsets-path "/localdisk/doc/dash")
+(setq helm-dash-common-docsets '("C++")) 
+(setq helm-dash-docsets-url "http://raw.github.com/Kapeli/feeds/master")
+
+;; session managment
+(require 'session)
+    (add-hook 'after-init-hook 'session-initialize)
+
+(when (require 'session nil t)
+  (add-hook 'after-init-hook 'session-initialize)
+  (add-to-list 'session-globals-exclude 'org-mark-ring))
+
+;; expanded folded secitons as required
+(defun le::maybe-reveal ()
+  (when (and (or (memq major-mode  '(org-mode outline-mode))
+                 (and (boundp 'outline-minor-mode)
+                      outline-minor-mode))
+             (outline-invisible-p))
+    (if (eq major-mode 'org-mode)
+        (org-reveal)
+      (show-subtree))))
+
+(add-hook 'session-after-jump-to-last-change-hook
+          'le::maybe-reveal)
+
+;;; Local session.
+;;  It will search “.emacs.session” file in the directory where you start Emacs
+(unless (daemonp)
+  (custom-set-variables '(session-save-file ".emacs.session"))
+
+  (let ((local-session (concat default-directory session-save-file)))
+    (if (file-exists-p local-session)
+        (progn
+          (custom-set-variables '(session-save-file local-session))
+          (message (concat "Local session file set to \"" session-save-file "\".")))
+      (custom-set-variables '(session-save-file (concat "~/" session-save-file))))))
+
+(require 'flycheck)
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+;; Firefox as default web-browser
+(setq browse-url-browser-function 'browse-url-firefox)
+
+;; Projectile
+(projectile-global-mode)
+(setq projectile-indexing-method 'alien)
+(setq projectile-enable-caching t)
+(require 'helm-projectile)
+(helm-projectile-on)
+
+(persp-mode)
+(require 'persp-projectile)
+
+;; backups
+(setq backup-directory-alist `(("." . "~/.emacs_backup")))
+
+;; magit setup
+(global-set-key (kbd "C-x g") 'magit-status) ;; hotkey to use magit
+(provide 'init)
+;;; init.el ends here
