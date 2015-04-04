@@ -1,31 +1,4 @@
 ;; My name and e-mail adress
-(setq user-full-name   "Andrew Savonichev")
-(setq user-mail-adress "andrew.savonichev@gmail.com")
-
-;; System-type definition
-(defun system-is-linux()
-  (string-equal system-type "gnu/linux"))
-
-(defun system-is-windows()
-  (string-equal system-type "windows-nt"))
-
-;; MS Windows path-variable
-(when (system-is-windows)
-    (setq win-sbcl-exe          "C:/sbcl/sbcl.exe")
-    (setq win-init-path         "C:/.emacs.d/init")
-    (setq win-init-ct-path      "C:/.emacs.d/plugins/color-theme")
-    (setq win-init-ac-path      "C:/.emacs.d/plugins/auto-complete")
-    (setq win-init-slime-path   "C:/slime")
-    (setq win-init-ac-dict-path "C:/.emacs.d/plugins/auto-complete/dict"))
-
-;; Unix path-variable
-(when (system-is-linux)
-    (setq unix-sbcl-bin          "/usr/bin/sbcl")
-    (setq unix-init-path         "~/.emacs.d/init")
-    (setq unix-init-ct-path      "~/.emacs.d/plugins/color-theme")
-    (setq unix-init-ac-path      "~/.emacs.d/plugins/auto-complete")
-    (setq unix-init-slime-path   "/usr/share/common-lisp/source/slime/")
-    (setq unix-init-ac-dict-path "~/.emacs.d/plugins/auto-complete/dict"))
 
 ;; packages
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
@@ -43,34 +16,6 @@
       (package-install 'use-package)))
 
 (require 'use-package)
-
-;; set default font in initial window and for any new window
-(cond
- ((string-equal system-type "windows-nt") ; Microsoft Windows
-  (when (member "DejaVu Sans Mono" (font-family-list))
-    (add-to-list 'initial-frame-alist '(font . "DejaVu Sans Mono-10"))
-    (add-to-list 'default-frame-alist '(font . "DejaVu Sans Mono-10"))
-    )
-  )
- ((string-equal system-type "darwin")   ; Mac OS X
-  (when (member "DejaVu Sans Mono" (font-family-list))
-    (add-to-list 'initial-frame-alist '(font . "DejaVu Sans Mono-10"))
-    (add-to-list 'default-frame-alist '(font . "DejaVu Sans Mono-10")))
-  )
- ((string-equal system-type "gnu/linux") ; linux
-  (when (member "DejaVu Sans Mono" (font-family-list))
-    (add-to-list 'initial-frame-alist '(font . "DejaVu Sans Mono-10"))
-    (add-to-list 'default-frame-alist '(font . "DejaVu Sans Mono-10")))
-  )
- )
-
-;; Display the name of the current buffer in the title bar
-(setq frame-title-format "GNU Emacs: %b")
-
-;; Load path for plugins
-(if (system-is-windows)
-  (add-to-list 'load-path win-init-path)
-  (add-to-list 'load-path unix-init-path))
 
 ;;
 ;; Standard key bindings
@@ -120,26 +65,6 @@
 (setq redisplay-dont-pause t)
 (setq ring-bell-function 'ignore)
 
-;; Coding-system settings
-(set-language-environment 'UTF-8)
-(if (system-is-linux) ;; for GNU/Linux use utf-8, for MS Windows - windows-1251
-    (progn
-        (setq default-buffer-file-coding-system 'utf-8)
-        (setq-default coding-system-for-read    'utf-8)
-        (setq file-name-coding-system           'utf-8)
-        (set-selection-coding-system            'utf-8)
-        (set-keyboard-coding-system        'utf-8-unix)
-        (set-terminal-coding-system             'utf-8)
-        (prefer-coding-system                   'utf-8))
-    (progn
-        (prefer-coding-system                   'windows-1251)
-        (set-terminal-coding-system             'windows-1251)
-        (set-keyboard-coding-system        'windows-1251-unix)
-        (set-selection-coding-system            'windows-1251)
-        (setq file-name-coding-system           'windows-1251)
-        (setq-default coding-system-for-read    'windows-1251)
-        (setq default-buffer-file-coding-system 'windows-1251)))
-
 ;; Linum plugin
 (require 'linum)
 (line-number-mode   t) 
@@ -167,14 +92,6 @@
 (defalias 'list-buffers 'ibuffer) ;; buffer list on C-x C-b
 (global-set-key (kbd "<f2>") 'bs-show) ;; hotkey buffer selection F2
 
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-(load-theme 'gruvbox t)
-
-
-;; Syntax highlighting
-(require 'font-lock)
-(global-font-lock-mode t)
-(setq font-lock-maximum-decoration t)
 
 ;; Indent settings
 (setq-default indent-tabs-mode nil) 
@@ -350,6 +267,16 @@
 (use-package magit
     :ensure t
     :bind ("C-x g" . magit-status))
+
+
+(use-package load-relative :ensure t)
+
+(load-relative "init/functions")
+(load-relative "init/paths")
+(load-relative "init/personal")
+(load-relative "init/appearance")
+(load-relative "init/platform")
+(load-relative "init/dev")
 
 (provide 'init)
 ;;; init.el ends here
