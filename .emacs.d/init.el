@@ -1,4 +1,4 @@
-``/col;; My name and e-mail adress
+;; My name and e-mail adress
 (setq user-full-name   "Andrew Savonichev")
 (setq user-mail-adress "andrew.savonichev@gmail.com")
 
@@ -35,6 +35,14 @@
                          ("melpa" . "http://melpa.milkbox.net/packages/")
 			 ))
 (package-initialize)
+(setq package-check-signature nil)
+
+(if (not (package-installed-p 'use-package))
+    (progn
+      (package-refresh-contents)
+      (package-install 'use-package)))
+
+(require 'use-package)
 
 ;; set default font in initial window and for any new window
 (cond
@@ -56,17 +64,6 @@
   )
  )
 
-;; Dired
-;; (require-package "dired")
-;; (require 'dired)
-;; (setq dired-recursive-deletes 'top) ;; allows to delete not empty directories
-
-;; Imenu
-(require 'imenu)
-(setq imenu-auto-rescan t) ;; auto update
-(setq imenu-use-popup-menu nil) ;; show dialogs only in minibuffer
-(global-set-key (kbd "<f4>") 'imenu) ;; hotkey Imenu to F4
-
 ;; Display the name of the current buffer in the title bar
 (setq frame-title-format "GNU Emacs: %b")
 
@@ -75,9 +72,6 @@
   (add-to-list 'load-path win-init-path)
   (add-to-list 'load-path unix-init-path))
 
-;; Org-mode settings
-(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
-(require 'org)
 ;;
 ;; Standard key bindings
 (global-set-key "\C-cl" 'org-store-link)
@@ -167,14 +161,6 @@
 (setq word-wrap          t)
 (global-visual-line-mode t)
 
-;; IDO plugin
-;; (require 'ido)
-;; (ido-mode                      t)
-;; (icomplete-mode                t)
-;; (ido-everywhere                t)
-;; tq ido-vitrual-buffers      t)
-;; tq ido-enable-flex-matching t)
-
 ;; Buffer Selection and ibuffer settings
 (require 'bs)
 (require 'ibuffer)
@@ -184,21 +170,6 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (load-theme 'gruvbox t)
 
-;; Color-theme definition
-;; (defun color-theme-init()
-;;  (color-theme-initialize)
-;;  (setq color-theme-is-global t)
-;;  ;; (gruvbox)
-;;  ;; (gruvbox-color-theme)
-;; )
-
-;; (if (system-is-windows)
-;;  (when (file-directory-p win-init-ct-path)
-;;      (add-to-list 'load-path win-init-ct-path)
-;;      (color-theme-init))
-;;  (when (file-directory-p unix-init-ct-path)
-;;      (add-to-list 'load-path unix-init-ct-path)
-;;      (color-theme-init)))
 
 ;; Syntax highlighting
 (require 'font-lock)
@@ -246,12 +217,14 @@
 (setq bookmark-default-file (concat user-emacs-directory "bookmarks")) ;; save to .emacs.d/bookmarks
 
 ;; evil vimmer
-(require 'evil)
-(evil-mode 1)
+(use-package evil
+    :ensure t
+    :config (evil-mode 1))
 
 ;; NyanMacs
-(require 'nyan-mode)
-(nyan-mode)
+(use-package nyan-mode
+    :ensure t
+    :config (nyan-mode))
 
 ;; GDB debugging
 (setq gdb-many-windows t) ;; use gdb-many-windows by default
@@ -259,110 +232,62 @@
 (setq gdb-show-main t)
 
 ;; Helm
-(require 'helm)
-(require 'helm-config)
+(use-package helm
+    :ensure t
+    :bind 
+        (("<tab>" . helm-execute-persistent-action) ; rebind tab to run persistent action
+         ("C-i"   . helm-execute-persistent-action) ; make TAB works in terminal
+         ("C-z"   . helm-select-action))            ; list actions using C-z
+    :config
+        ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+        ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+        ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+        (global-set-key (kbd "C-c h") 'helm-command-prefix)
+        (global-unset-key (kbd "C-x c"))
 
-;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
-;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
-;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
-(global-set-key (kbd "C-c h") 'helm-command-prefix)
-(global-unset-key (kbd "C-x c"))
+        ;; (use-package helm-config :ensure t)
+        (helm-mode 1)
 
-(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
-(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
-(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+    :init
+        (setq helm-split-window-in-side-p         t ; open helm buffer inside current window, not occupy whole other window
+            helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+            helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+            helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+            helm-ff-file-name-history-use-recentf t))
+
+
+
 
 (when (executable-find "curl")
   (setq helm-google-suggest-use-curl-p t))
 
-(setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
-      helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-      helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
-      helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
-      helm-ff-file-name-history-use-recentf t)
 
-(helm-mode 1)
+(use-package cc-mode)
 
-(setq
- helm-gtags-ignore-case t
- helm-gtags-auto-update t
- helm-gtags-use-input-at-cursor t
- helm-gtags-pulse-at-cursor t
- helm-gtags-prefix-key "\C-cg"
- helm-gtags-suggested-key-mapping t
- )
+(use-package cmake-mode
+    :ensure t
+    :mode "\\(CMakeLists\\.txt\\'\\|\\.cmake\\'\\)")
 
-(require 'helm-gtags)
-;; Enable helm-gtags-mode
-(add-hook 'dired-mode-hook 'helm-gtags-mode)
-(add-hook 'eshell-mode-hook 'helm-gtags-mode)
-(add-hook 'c-mode-hook 'helm-gtags-mode)
-(add-hook 'c++-mode-hook 'helm-gtags-mode)
-(add-hook 'asm-mode-hook 'helm-gtags-mode)
+(use-package semantic
+    :ensure t
+    :config 
+        (global-semanticdb-minor-mode 1)
+        (global-semantic-idle-scheduler-mode 1)
+        (semantic-mode 1))
 
-(define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
-(define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
-(define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
-(define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
-(define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-(define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
-
-(require 'cc-mode)
-(require 'cmake-mode)
-(add-to-list 'auto-mode-alist '("CMakeLists\\.txt\\'" . cmake-mode))
-(add-to-list 'auto-mode-alist '("\\.cmake\\'" . cmake-mode))
-(require 'semantic)
-
-(global-semanticdb-minor-mode 1)
-(global-semantic-idle-scheduler-mode 1)
-
-(semantic-mode 1)
-
-(require 'cedet)
-
-;; function-args
-(require 'function-args)
-(fa-config-default)
-(define-key c-mode-map [(tab)] 'moo-complete)
-(define-key c++-mode-map [(tab)] 'moo-complete)
-;; company
-(require 'company)
-(add-hook 'after-init-hook 'global-company-mode)
-(delete 'company-semantic company-backends)
-(define-key c-mode-map [(control tab)] 'company-complete)
-(define-key c++-mode-map [(control tab)] 'company-complete)
-;; company-c-headers
-(add-to-list 'company-backends 'company-c-headers)
-;; hs-minor-mode for folding source code
-(add-hook 'c-mode-common-hook 'hs-minor-mode)
-
-;; use helm with company
-(eval-after-load 'company
-  '(progn
-     (define-key company-mode-map (kbd "C-:") 'helm-company)
-     (define-key company-active-map (kbd "C-:") 'helm-company)))
-
-
-;; Function args
-;; (require 'function-args)
-;; (fa-config-default)
-;; (define-key c-mode-map  [C-Tab] 'moo-complete)
-;; (define-key c++-mode-map  [C-Tab] 'moo-complete)
-;; (define-key c-mode-map (kbd "M-o")  'fa-show)
-;; (define-key c++-mode-map (kbd "M-o")  'fa-show)
 
 ;; Org-mode
-(require 'org-install)
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
-(setq org-log-done t)
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(use-package org
+    :ensure t
+    :mode ("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode)
+    :init
+        (setq org-log-done t)
+    :config
+        (custom-set-faces)
+    :bind
+        (("\C-cl" . org-store-link)
+         ("\C-ca" . org-agenda)))
+
 
 ;; compilation
 (setq compilation-scroll-output t)
@@ -379,58 +304,44 @@
           (make-variable-buffer-local 'compile-history)))
 
 ;; helm-dash
-(setq helm-dash-docsets-path "/localdisk/doc/dash")
-(setq helm-dash-common-docsets '("C++")) 
-(setq helm-dash-docsets-url "http://raw.github.com/Kapeli/feeds/master")
+(use-package helm-dash
+    :ensure t
+    :init 
+        (setq helm-dash-docsets-path "/localdisk/doc/dash")
+        (setq helm-dash-common-docsets '("C++")) 
+        (setq helm-dash-docsets-url "http://raw.github.com/Kapeli/feeds/master"))
 
 ;; session managment
-(require 'session)
-    (add-hook 'after-init-hook 'session-initialize)
+(use-package session
+    :ensure t
+    :init
+        (session-initialize))
 
-(when (require 'session nil t)
-  (add-hook 'after-init-hook 'session-initialize)
-  (add-to-list 'session-globals-exclude 'org-mark-ring))
-
-;; expanded folded secitons as required
-(defun le::maybe-reveal ()
-  (when (and (or (memq major-mode  '(org-mode outline-mode))
-                 (and (boundp 'outline-minor-mode)
-                      outline-minor-mode))
-             (outline-invisible-p))
-    (if (eq major-mode 'org-mode)
-        (org-reveal)
-      (show-subtree))))
-
-(add-hook 'session-after-jump-to-last-change-hook
-          'le::maybe-reveal)
-
-;;; Local session.
-;;  It will search “.emacs.session” file in the directory where you start Emacs
-(unless (daemonp)
-  (custom-set-variables '(session-save-file ".emacs.session"))
-
-  (let ((local-session (concat default-directory session-save-file)))
-    (if (file-exists-p local-session)
-        (progn
-          (custom-set-variables '(session-save-file local-session))
-          (message (concat "Local session file set to \"" session-save-file "\".")))
-      (custom-set-variables '(session-save-file (concat "~/" session-save-file))))))
-
-(require 'flycheck)
-(add-hook 'after-init-hook #'global-flycheck-mode)
+(use-package flycheck
+    :ensure t
+    :init (global-flycheck-mode))
 
 ;; Firefox as default web-browser
 (setq browse-url-browser-function 'browse-url-firefox)
 
 ;; Projectile
-(projectile-global-mode)
-(setq projectile-indexing-method 'alien)
-(setq projectile-enable-caching t)
-(require 'helm-projectile)
-(helm-projectile-on)
+(use-package projectile
+    :ensure t
+    :init
+        (setq projectile-indexing-method 'alien)
+        (setq projectile-enable-caching t)
+    :config
+        (projectile-global-mode)
+        (use-package helm-projectile
+            :ensure t
+            :config
+                (helm-projectile-on)))
 
-(persp-mode)
-(require 'persp-projectile)
+(use-package perspective
+    :ensure t
+    :config
+        (persp-mode)
+        (use-package persp-projectile :ensure t))
 
 ;; backups
 (setq backup-directory-alist `(("." . "~/.emacs_backup")))
