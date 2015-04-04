@@ -179,18 +179,12 @@
   (setq helm-google-suggest-use-curl-p t))
 
 
-(use-package cc-mode)
-
-(use-package cmake-mode
-    :ensure t
-    :mode "\\(CMakeLists\\.txt\\'\\|\\.cmake\\'\\)")
-
-(use-package semantic
-    :ensure t
-    :config 
-        (global-semanticdb-minor-mode 1)
-        (global-semantic-idle-scheduler-mode 1)
-        (semantic-mode 1))
+;; (use-package semantic
+;;     :ensure t
+;;     :config 
+;;         (global-semanticdb-minor-mode 1)
+;;         (global-semantic-idle-scheduler-mode 1)
+;;         (semantic-mode 1))
 
 
 ;; Org-mode
@@ -233,10 +227,6 @@
     :ensure t
     :init
         (session-initialize))
-
-(use-package flycheck
-    :ensure t
-    :init (global-flycheck-mode))
 
 ;; Firefox as default web-browser
 (setq browse-url-browser-function 'browse-url-firefox)
