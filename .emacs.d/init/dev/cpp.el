@@ -38,6 +38,21 @@
         (eval-after-load 'flycheck
         '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
 
+(use-package rtags
+    :ensure t
+    :bind
+        (("M-s s" . rtags-find-symbol-at-point)     ; follow symbol under cursor
+         ("M-s S" . rtags-find-symbol)              ; promt for a symbol to go
+         ("M-s r" . rtags-find-references-at-point) ; find all references to symbol under cursor
+         ("M-s R" . rtags-find-references)          ; promt for reference
+         ("M-s f" . rtags-find-file)                ; finds file in project (partially or not)
+         ("M-s v" . rtags-find-virtuals-at-point)   ; show the various reimplementations of the function at point
+         ("M-s e" . rtags-fixit)                    ; fixes simple errors
+         ("M-s q" . rtags-imenu)                    ; shows a subset of the symbols in the current file
+         ("M-s p" . rtags-preprocess-file)          ; preprocess current file or selected region
+         ("M-s i" . rtags-print-cursorinfo)         ; print some info about symbol under cursor
+         ("M-s c" . rtags-rename-symbol)))            ; rename symbol at point
+
 (provide-me)
 
 ;;; cpp.el ends here
