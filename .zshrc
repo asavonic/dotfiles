@@ -8,7 +8,6 @@ export PAGER=vimpager
 # export TERM=rxvt-unicode-256color
 
 ZSH_THEME="frisk"
-plugins=(vi-mode)
 
 # Aliases
 alias tmns="tmux new-session -s"

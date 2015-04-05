@@ -143,6 +143,8 @@
     :ensure t
     :config (nyan-mode))
 
+(use-package rainbow-delimiters :ensure t)
+
 ;; GDB debugging
 (setq gdb-many-windows t) ;; use gdb-many-windows by default
 ;; Non-nil means display source file containing the main routine at startup
@@ -151,19 +153,9 @@
 ;; Helm
 (use-package helm
     :ensure t
-    :bind 
-        (("<tab>" . helm-execute-persistent-action) ; rebind tab to run persistent action
-         ("C-i"   . helm-execute-persistent-action) ; make TAB works in terminal
-         ("C-z"   . helm-select-action))            ; list actions using C-z
     :config
-        ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
-        ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
-        ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
-        (global-set-key (kbd "C-c h") 'helm-command-prefix)
-        (global-unset-key (kbd "C-x c"))
-
-        ;; (use-package helm-config :ensure t)
         (helm-mode 1)
+        (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 
     :init
         (setq helm-split-window-in-side-p         t ; open helm buffer inside current window, not occupy whole other window
@@ -252,12 +244,6 @@
 
 ;; backups
 (setq backup-directory-alist `(("." . "~/.emacs_backup")))
-
-;; magit setup
-(use-package magit
-    :ensure t
-    :bind ("C-x g" . magit-status))
-
 
 (use-package load-relative :ensure t)
 

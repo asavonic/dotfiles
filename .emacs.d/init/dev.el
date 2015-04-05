@@ -1,3 +1,7 @@
+(use-package magit
+    :ensure t
+    :bind ("C-x g" . magit-status))
+
 (use-package company
     :ensure t
     :init (setq company-idle-delay 0)
