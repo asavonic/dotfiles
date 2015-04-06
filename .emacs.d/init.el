@@ -210,8 +210,6 @@
 (use-package helm-dash
     :ensure t
     :init 
-        (setq helm-dash-docsets-path "/localdisk/doc/dash")
-        (setq helm-dash-common-docsets '("C++")) 
         (setq helm-dash-docsets-url "http://raw.github.com/Kapeli/feeds/master"))
 
 ;; session managment
@@ -256,3 +254,19 @@
 
 (provide 'init)
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes (quote (gruvbox)))
+ '(custom-safe-themes
+   (quote
+    ("a313c0909db21686da58bbbb26076d85976a30eb47254dd454e21f26e462668a" default)))
+ '(session-use-package t nil (session)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
