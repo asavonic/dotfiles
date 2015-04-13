@@ -221,25 +221,6 @@
 ;; Firefox as default web-browser
 (setq browse-url-browser-function 'browse-url-firefox)
 
-;; Projectile
-(use-package projectile
-    :ensure t
-    :init
-        (setq projectile-indexing-method 'alien)
-        (setq projectile-enable-caching t)
-    :config
-        (projectile-global-mode)
-        (use-package helm-projectile
-            :ensure t
-            :config
-                (helm-projectile-on)))
-
-(use-package perspective
-    :ensure t
-    :config
-        (persp-mode)
-        (use-package persp-projectile :ensure t))
-
 ;; backups
 (setq backup-directory-alist `(("." . "~/.emacs_backup")))
 

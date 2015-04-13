@@ -15,6 +15,25 @@
     :ensure t
     :config (yas-global-mode 1))
 
+(use-package projectile
+    :ensure t
+    :init
+        (setq projectile-indexing-method 'alien)
+        (setq projectile-enable-caching t)
+    :config
+        (projectile-global-mode)
+        (use-package helm-projectile
+            :ensure t
+            :config
+                (helm-projectile-on)))
+
+(use-package perspective
+    :ensure t
+    :config
+        (persp-mode)
+        (use-package persp-projectile :ensure t))
+
+
 
 (load-relative "dev/cpp")
 (load-relative "dev/python")
