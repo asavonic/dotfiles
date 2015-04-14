@@ -6,6 +6,7 @@
                          ;; ("marmalade" . "http://marmalade-repo.org/packages/")
                          ;; ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")
+                         ("elpy" . "http://jorgenschaefer.github.io/packages/")
 			 ))
 (package-initialize)
 (setq package-check-signature nil)
