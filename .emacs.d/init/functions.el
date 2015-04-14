@@ -26,5 +26,23 @@
       (message "%s copied" new-kill-string)
       (kill-new new-kill-string))))
 
+(defun interactive-run-test (test)
+  (interactive "fTest: ")
+  (message "running %s" test)
+  (with-output-to-temp-buffer "*test-run*"
+    (with-current-buffer "*test-run*"
+        (compilation-mode))
+    (font-lock-mode)
+    (font-lock-add-keywords nil
+                 '(("(Failed\\|TODO\\|BUG\\)" 1 font-lock-warning-face prepend)))
+    (async-shell-command test
+                   "*test-run*")))
+                   
+
+(defun run-test()
+    (interactive)
+    (let ((default-directory (symbol-value 'default-test-directory)))
+        (call-interactively 'interactive-run-test)))
+
 (provide-me)
 ;;; functions.el ends here
