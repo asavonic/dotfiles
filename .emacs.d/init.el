@@ -100,8 +100,8 @@
 (setq-default c-basic-offset     4)
 (setq-default standart-indent    4) 
 (setq-default lisp-body-indent   4) 
-(global-set-key (kbd "RET") 'newline-and-indent) 
 (setq lisp-indent-function  'common-lisp-indent-function)
+(electric-indent-mode)
 
 ;; Scrolling settings
 (setq scroll-step 1) 
@@ -245,6 +245,7 @@
  '(custom-safe-themes
    (quote
     ("a313c0909db21686da58bbbb26076d85976a30eb47254dd454e21f26e462668a" default)))
+ '(org-agenda-files nil)
  '(session-use-package t nil (session)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

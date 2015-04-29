@@ -32,8 +32,20 @@
     :config
         (persp-mode)
         (use-package persp-projectile :ensure t))
+(use-package ag
+    :ensure t)
+
+(use-package smartparens
+    :ensure t)
 
 
+(defadvice gdb-display-buffer (after undedicate-gdb-display-buffer)
+  (set-window-dedicated-p ad-return-value nil))
+(ad-activate 'gdb-display-buffer)
+
+(defadvice gdb-set-window-buffer (after undedicate-gdb-set-window-buffer (name &optional ignore-dedi window))
+  (set-window-dedicated-p window nil))
+(ad-activate 'gdb-set-window-buffer)
 
 (load-relative "dev/cpp")
 (load-relative "dev/python")
