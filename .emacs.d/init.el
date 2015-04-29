@@ -103,6 +103,9 @@
 (setq lisp-indent-function  'common-lisp-indent-function)
 (electric-indent-mode)
 
+;; always save history
+(savehist-mode 1)
+
 ;; Scrolling settings
 (setq scroll-step 1) 
 ;; (setq scroll-margin 10)
@@ -133,6 +136,8 @@
 (global-set-key (kbd "<f10>") 'bookmark-jump) ;; hotkey jump to bookmark F10
 (global-set-key (kbd "<f11>") 'bookmark-bmenu-list) ;; hotkey open bookmark list F11
 (setq bookmark-default-file (concat user-emacs-directory "bookmarks")) ;; save to .emacs.d/bookmarks
+
+(global-set-key (kbd "C-c C-v") 'browse-url)
 
 ;; evil vimmer
 (use-package evil
