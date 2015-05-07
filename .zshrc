@@ -16,6 +16,24 @@ alias tmls="tmux list-sessions"
 alias tardir="tar -zcvf"
 alias ll='ls -la --color'
 
+alias -g L="| less"
+alias -g EL='|& less'
+alias -g LL="2>&1 | less"
+
+alias -g GR="| grep -n"
+
+# Copy the working dir to the clipboard
+alias cpwd='pwd|xargs echo -n|pbcopy'
+
+alias sha1='openssl dgst -sha1'
+alias sha256='openssl dgst -sha256'
+
+alias grep='grep --color=auto'
+
+function mdcd() {
+    mkdir -p "$*" && cd "$*"
+}
+
 setopt autopushd
 
 source $ZSH/oh-my-zsh.sh

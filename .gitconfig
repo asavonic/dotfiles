@@ -14,3 +14,11 @@
 	default = simple
 [rerere]
 	enabled = true
+[alias]
+	last = !git --no-pager log -1 HEAD
+	co = checkout
+	br = branch
+	cm = commit
+	st = status
+	unstage = reset HEAD --
+	tree = log --oneline --graph --decorate
