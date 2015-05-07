@@ -1,0 +1,16 @@
+[user]
+	name = Andrew Savonichev
+	email = andrew.savonichev@gmail.com
+[merge]
+	tool = vimdiff
+	conflictstyle = diff3
+	stat = true
+[mergetool]
+	prompt = false
+	keepBackup = false
+[color]
+	ui = auto
+[push]
+	default = simple
+[rerere]
+	enabled = true
