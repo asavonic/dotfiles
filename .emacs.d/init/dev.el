@@ -27,17 +27,30 @@
             :config
                 (helm-projectile-on)))
 
-(use-package perspective
+(use-package workgroups2
     :ensure t
+    :init
+        (setq wg-prefix-key (kbd "C-c C-z"))
+        (setq wg-session-file "~/.emacs.d/.emacs_workgroups")
+
     :config
-        (persp-mode)
-        (use-package persp-projectile :ensure t))
+        (workgroups-mode 1)
+    )
+
 (use-package ag
     :ensure t)
 
 (use-package smartparens
     :ensure t)
 
+(use-package realgud
+    :ensure t)
+
+(use-package lua-mode
+    :ensure t)
+
+(setq compilation-scroll-output 'first-error)
+(setq compilation-skip-threshold 2) ;; skip everythng less important than error
 
 (defadvice gdb-display-buffer (after undedicate-gdb-display-buffer)
   (set-window-dedicated-p ad-return-value nil))

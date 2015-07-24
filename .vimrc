@@ -20,7 +20,6 @@ Plugin 'kien/ctrlp.vim'                     " fuzzy search
 Plugin 'mileszs/ack.vim'
 
 "---------=== Code complete ===-------------
-Plugin 'Valloric/YouCompleteMe'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 

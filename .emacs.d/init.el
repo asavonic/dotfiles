@@ -111,6 +111,8 @@
 ;; (setq scroll-margin 10)
 (setq scroll-conservatively 10000)
 
+;; auto-refresh buffers on file changes
+(global-auto-revert-mode t)
 
 ;; Short messages in minibuf
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -191,6 +193,7 @@
     :mode ("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode)
     :init
         (setq org-log-done t)
+        (org-startup-indented t)
     :config
         (custom-set-faces)
     :bind
@@ -238,6 +241,7 @@
 (load-relative "init/appearance")
 (load-relative "init/platform")
 (load-relative "init/dev")
+(load-relative "init/mail")
 
 (provide 'init)
 ;;; init.el ends here
@@ -258,3 +262,5 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(put 'narrow-to-region 'disabled nil)
+(put 'narrow-to-page 'disabled nil)

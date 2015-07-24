@@ -44,5 +44,6 @@
     (let ((default-directory (symbol-value 'default-test-directory)))
         (call-interactively 'interactive-run-test)))
 
+(load-relative "functions/my-desktop.el")
 (provide-me)
 ;;; functions.el ends here
