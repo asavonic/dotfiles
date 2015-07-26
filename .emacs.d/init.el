@@ -73,4 +73,16 @@
 (global-set-key (kbd "M-j") 'next-line)
 (global-set-key (kbd "M-k") 'previous-line)
 
+(use-package evil
+    :ensure t
+    :config (evil-mode 1))
+
 (require 'asavonic-appearance)
+(require 'functions)
+
+(add-hook 'cc-mode-hook
+      (lambda ()
+          (local-unset-key (kbd "C-c C-l"))))
+
+(global-set-key (kbd "C-c C-l") 'run-custom-command)
+(put 'downcase-region 'disabled nil)
