@@ -1,0 +1,22 @@
+# -*- mode: snippet -*-
+# name: startcpp
+# key: startcpp
+# --
+CC=g++
+CFLAGS=-c -Wall
+LDFLAGS=
+SOURCES=${1:main.cpp}
+OBJECTS=$(SOURCES:.cpp=.o)
+EXECUTABLE=$2
+
+all: $(SOURCES) $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+
+.cpp.o:
+	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm $(EXECUTABLE)
+	rm $(OBJECTS)

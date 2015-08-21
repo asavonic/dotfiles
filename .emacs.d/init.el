@@ -1,34 +1,219 @@
-;; My name and e-mail adress
+(setq user-full-name "Andrew Savonichev")
+(setq user-mail-address "andrew.savonichev@gmail.com")
 
-;; packages
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ;; ("org" . "http://orgmode.org/elpa/")
-                         ;; ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ;; ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")
-                         ("elpy" . "http://jorgenschaefer.github.io/packages/")
-			 ))
+(setq homedir (getenv "HOME"))
+(add-to-list 'load-path (concat homedir "/.emacs.d"))
+(add-to-list 'load-path (concat homedir "/.emacs.d/appearance"))
+
+(require 'package)
+(add-to-list 'package-archives
+  '("melpa" . "http://melpa.org/packages/")
+  t)
 (package-initialize)
-(setq package-check-signature nil)
 
-(if (not (package-installed-p 'use-package))
-    (progn
-      (package-refresh-contents)
-      (package-install 'use-package)))
+;; Bootstrap `use-package'
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
 (require 'use-package)
 
-;;
-;; Standard key bindings
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cb" 'org-iswitchb)
+;; set initial screen to *scratch* buffer with org-mode
+(setq inhibit-splash-screen t
+      initial-scratch-message nil
+      initial-major-mode 'org-mode)
 
-(setq org-agenda-files (quote ("~/org")))
+;; disable unused gui elements
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
 
+;; tabs vs spaces holywar: spaces won for me :)
+(setq tab-width 4
+      indent-tabs-mode nil)
+
+;; disable backup files
+(setq make-backup-files nil)
+
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+(dolist (key '("\C-z"))
+  (global-unset-key key))
+
+(global-set-key (kbd "RET") 'newline-and-indent)
+(global-set-key (kbd "C-;") 'comment-or-uncomment-region)
+(global-set-key (kbd "M-/") 'hippie-expand)
+(global-set-key (kbd "C-=") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+(global-set-key (kbd "C-c C-k") 'compile)
+
+(setq show-paren-delay 0)
+(show-paren-mode t)
+(use-package smartparens
+    :ensure t
+    :config (require 'smartparens-config)
+            (smartparens-global-mode 1))
+
+(setq-default show-trailing-whitespace t)
+
+(global-linum-mode t)
+
+(require 'ido)
+(ido-mode 1)
+(ido-everywhere 1)
+(setq ido-enable-flex-matching 1)
+
+(use-package ace-jump-mode
+    :ensure t
+    :bind ("M-z" . ace-jump-mode))
+
+(require 'asavonic-appearance)
+(require 'my-mail)
+(require 'functions)
+
+(add-hook 'cc-mode-hook
+      (lambda ()
+          (local-unset-key (kbd "C-c C-l"))))
+
+(global-set-key (kbd "C-c C-l") 'run-custom-command)
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+
+(use-package dired+
+    :ensure t)
+
+;; following 4 plugin configs: https://github.com/tuhdo/emacs-c-ide-demo
+(use-package ggtags
+    :ensure t
+    :config (add-hook 'c-mode-common-hook
+		      (lambda ()
+			  (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+			      (ggtags-mode 1))))
+            (define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
+	    (define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
+	    (define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-find-reference)
+	    (define-key ggtags-mode-map (kbd "C-c g f") 'ggtags-find-file)
+	    (define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
+	    (define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
+	    (define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark))
+
+(use-package helm
+    :ensure t
+    :config (require 'helm-grep)
+	    (global-set-key (kbd "M-x") 'helm-M-x)
+	    (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+	    (global-set-key (kbd "C-x b") 'helm-mini)
+	    (global-set-key (kbd "C-x C-f") 'helm-find-files)
+	    (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
+	    (global-set-key (kbd "C-c h o") 'helm-occur)
+
+	    (add-hook 'eshell-mode-hook
+		      #'(lambda ()
+			    (define-key eshell-mode-map (kbd "M-l")  'helm-eshell-history)))
+	    ;;; Save current position to mark ring
+	    (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
+
+	    ;; show minibuffer history with Helm
+	    (define-key minibuffer-local-map (kbd "M-p") 'helm-minibuffer-history)
+	    (define-key minibuffer-local-map (kbd "M-n") 'helm-minibuffer-history))
+
+(use-package helm-gtags
+    :ensure t
+    :config (setq helm-gtags-ignore-case t
+		  helm-gtags-auto-update t
+		  helm-gtags-use-input-at-cursor t
+		  helm-gtags-pulse-at-cursor t
+		  helm-gtags-prefix-key "\C-cg"
+		  helm-gtags-suggested-key-mapping t)
+            (add-hook 'dired-mode-hook 'helm-gtags-mode)
+	    (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+	    (add-hook 'c-mode-hook 'helm-gtags-mode)
+	    (add-hook 'c++-mode-hook 'helm-gtags-mode)
+	    (add-hook 'java-mode-hook 'helm-gtags-mode)
+	    (add-hook 'asm-mode-hook 'helm-gtags-mode)
+	    (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+	    (define-key helm-gtags-mode-map (kbd "C-C C-j") 'helm-gtags-select)
+	    (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+	    (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+	    (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+	    (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))
+
+(use-package helm-swoop
+    :ensure t
+    :config (global-set-key (kbd "C-c h o") 'helm-swoop)
+	    (global-set-key (kbd "C-c s") 'helm-multi-swoop-all)
+
+	    ;; When doing isearch, hand the word over to helm-swoop
+	    (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+
+	    ;; From helm-swoop to helm-multi-swoop-all
+	    (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+	    ;; Save buffer when helm-multi-swoop-edit complete
+	    (setq helm-multi-swoop-edit-save t)
+
+	    ;; If this value is t, split window inside the current window
+	    (setq helm-swoop-split-with-multiple-windows t)
+
+	    ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
+	    (setq helm-swoop-split-direction 'split-window-vertically)
+
+	    ;; If nil, you can slightly boost invoke speed in exchange for text color
+	    (setq helm-swoop-speed-or-color t))
+
+(use-package ag
+    :ensure t)
+
+(use-package shell-switcher
+    :ensure t
+    :config (setq shell-switcher-mode t))
+
+(use-package company
+    :ensure t
+    :config (add-hook 'after-init-hook 'global-company-mode)
+            (setq company-idle-delay 0))
+
+(use-package elpy
+    :ensure t
+    :config (elpy-enable))
+
+;; Use M-n M-p to move to next or prev occurence of symbol at point
+;; Use M-' to replace all symbols in file, C-u M-' to replace them only in current function
+(use-package smartscan
+  :ensure t
+  :config (smartscan-mode 1)
+          (global-set-key (kbd "M-n") 'smartscan-symbol-go-forward)
+	  (global-set-key (kbd "M-p") 'smartscan-symbol-go-backward)
+	  (global-set-key (kbd "M-'") 'smartscan-symbol-replace))
+
+(use-package lua-mode
+  :ensure t
+  :config (setq lua-indent-level 4
+                lua-indent-string-contents t))
+(use-package cmake-mode
+  :ensure t)
+
+(use-package flycheck
+  :ensure t
+  :config (add-hook 'after-init-hook #'global-flycheck-mode))
+
+(setq compilation-skip-threshold 2
+      compilation-auto-jump-to-first-error t
+      compilation-scroll-output t)
+
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+(setq c-default-style "linux"
+      c-basic-offset 4)
+
+
+(use-package org
+  :ensure t
+  :config (setq org-log-done t)
+          (setq org-agenda-files (list "~/org/teapod.org"
+				       "~/org/wiki.org"
+				       "~/org/common.org")))
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
@@ -36,231 +221,20 @@
               ("DONE" :foreground "forest green" :weight bold)
               ("WAITING" :foreground "orange" :weight bold)
               ("HOLD" :foreground "magenta" :weight bold)
-              ("CANCELLED" :foreground "forest green" :weight bold)
-              ("MEETING" :foreground "forest green" :weight bold)
-              ("PHONE" :foreground "forest green" :weight bold))))
+              ("CANCELLED" :foreground "forest green" :weight bold))))
 
-(setq org-agenda-files (list "~/org/tickets.org"
-                             "~/org/validation.org" 
-                             "~/org/env.org"))
+(setq org-use-fast-todo-selection t)
+(setq org-todo-state-tags-triggers
+      (quote (("CANCELLED" ("CANCELLED" . t))
+              ("WAITING" ("WAITING" . t))
+              ("HOLD" ("WAITING") ("HOLD" . t))
+              (done ("WAITING") ("HOLD"))
+              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 
-;; Inhibit startup/splash screen
-(setq inhibit-splash-screen   t)
-(setq ingibit-startup-message t) ;; call explisit with C-h C-a
-
-;; Electric-modes settings
-(electric-pair-mode    1) ;; autoclose () {} []
-(electric-indent-mode -1) ;; disable auto intendation
-
-
-;; Delete selection
-(delete-selection-mode t) ;; allows to delete selected text inserting new one
-
-;; Disable GUI components
-(tooltip-mode      -1)
-(menu-bar-mode     -1)
-(tool-bar-mode     -1)
-(scroll-bar-mode   -1)
-(blink-cursor-mode -1) 
-(setq use-dialog-box     nil)
-(setq redisplay-dont-pause t)
-(setq ring-bell-function 'ignore)
-
-;; Linum plugin
-(require 'linum)
-(line-number-mode   t) 
-(global-linum-mode  t) 
-(column-number-mode t) 
-(setq linum-format " %d")
-
-;; Fringe settings
-;; (fringe-mode '(8 . 0)) ;;
-;; (setq-default indicate-empty-lines t)
-;; (setq-default indicate-buffer-boundaries 'left)
-
-;; Display file size/time in mode-line
-(setq display-time-24hr-format t) ;; 24-hours format in mode-line
-(display-time-mode             t) ;; show time in mode-line
-(size-indication-mode          t) ;; file %
-
-;; Line wrapping
-(setq word-wrap          t)
-(global-visual-line-mode t)
-
-;; Buffer Selection and ibuffer settings
-(require 'bs)
-(require 'ibuffer)
-(defalias 'list-buffers 'ibuffer) ;; buffer list on C-x C-b
-(global-set-key (kbd "<f2>") 'bs-show) ;; hotkey buffer selection F2
-
-
-;; Indent settings
-(setq-default indent-tabs-mode nil) 
-(setq-default tab-width          4) 
-(setq-default c-basic-offset     4)
-(setq-default standart-indent    4) 
-(setq-default lisp-body-indent   4) 
-(setq lisp-indent-function  'common-lisp-indent-function)
-(electric-indent-mode)
-
-;; always save history
-(savehist-mode 1)
-
-;; Scrolling settings
-(setq scroll-step 1) 
-;; (setq scroll-margin 10)
-(setq scroll-conservatively 10000)
-
-;; auto-refresh buffers on file changes
-(global-auto-revert-mode t)
-
-;; Short messages in minibuf
-(defalias 'yes-or-no-p 'y-or-n-p)
-
-
-;; use shared X clipboard settings
-(setq x-select-enable-clipboard t)
-
-;; Highlight search resaults
-(setq search-highlight        t)
-(setq query-replace-highlight t)
-
-;; Easy transition between buffers: M-arrow-keys
-(if (equal nil (equal major-mode 'org-mode))
-    (windmove-default-keybindings 'meta))
-
-;; Bookmark settings
-(require 'bookmark)
-(setq bookmark-save-flag t) ;; autosave to file
-(when (file-exists-p (concat user-emacs-directory "bookmarks"))
-    (bookmark-load bookmark-default-file t))
-(global-set-key (kbd "<f9>") 'bookmark-set) ;; hotkey create bookmark F9
-(global-set-key (kbd "<f10>") 'bookmark-jump) ;; hotkey jump to bookmark F10
-(global-set-key (kbd "<f11>") 'bookmark-bmenu-list) ;; hotkey open bookmark list F11
-(setq bookmark-default-file (concat user-emacs-directory "bookmarks")) ;; save to .emacs.d/bookmarks
-
-(global-set-key (kbd "C-c C-v") 'browse-url)
-
-;; evil vimmer
-(use-package evil
-    :ensure t
-    :config (evil-mode 1))
-
-;; NyanMacs
-(use-package nyan-mode
-    :ensure t
-    :config (nyan-mode))
-
-(use-package rainbow-delimiters :ensure t)
-
-;; GDB debugging
-(setq gdb-many-windows t) ;; use gdb-many-windows by default
-;; Non-nil means display source file containing the main routine at startup
-(setq gdb-show-main t)
-
-;; Helm
-(use-package helm
-    :ensure t
-    :config
-        (helm-mode 1)
-        (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-
-    :init
-        (setq helm-split-window-in-side-p         t ; open helm buffer inside current window, not occupy whole other window
-            helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-            helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
-            helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
-            helm-ff-file-name-history-use-recentf t))
-
-
-
-
-(when (executable-find "curl")
-  (setq helm-google-suggest-use-curl-p t))
-
-
-;; (use-package semantic
-;;     :ensure t
-;;     :config 
-;;         (global-semanticdb-minor-mode 1)
-;;         (global-semantic-idle-scheduler-mode 1)
-;;         (semantic-mode 1))
-
-
-;; Org-mode
-(use-package org
-    :ensure t
-    :mode ("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode)
-    :init
-        (setq org-log-done t)
-        (org-startup-indented t)
-    :config
-        (custom-set-faces)
-    :bind
-        (("\C-cl" . org-store-link)
-         ("\C-ca" . org-agenda)))
-
-
-;; compilation
-(setq compilation-scroll-output t)
-(defun cc-goto-first-error( buffer exit-condition )
-    (with-current-buffer buffer
-                             (goto-char (point-min))
-                                 (compilation-next-error 1)))
-
-(add-to-list 'compilation-finish-functions 'cc-goto-first-error)
-(global-set-key (kbd "<f5>") 'compile) ;; hotkey
-
-(eval-after-load 'compile
-  '(progn (make-variable-buffer-local 'compile-command)
-          (make-variable-buffer-local 'compile-history)))
-
-;; helm-dash
-(use-package helm-dash
-    :ensure t
-    :init 
-        (setq helm-dash-docsets-url "http://raw.github.com/Kapeli/feeds/master"))
-
-;; session managment
-(use-package session
-    :ensure t
-    :init
-        (session-initialize))
-
-;; Firefox as default web-browser
-(setq browse-url-browser-function 'browse-url-firefox)
-
-;; backups
-(setq backup-directory-alist `(("." . "~/.emacs_backup")))
-
-(use-package load-relative :ensure t)
-
-(load-relative "init/functions")
-(load-relative "init/paths")
-(load-relative "init/personal")
-(load-relative "init/appearance")
-(load-relative "init/platform")
-(load-relative "init/dev")
-(load-relative "init/mail")
+(use-package blank-mode
+  :ensure t)
 
 (provide 'init)
 ;;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (gruvbox)))
- '(custom-safe-themes
-   (quote
-    ("a313c0909db21686da58bbbb26076d85976a30eb47254dd454e21f26e462668a" default)))
- '(org-agenda-files nil)
- '(session-use-package t nil (session)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-(put 'narrow-to-region 'disabled nil)
-(put 'narrow-to-page 'disabled nil)
