@@ -1,2 +1,4 @@
 (require 'smyx-theme)
-(set-frame-font "Inconsolata-16")
+(set-frame-font "Inconsolata LGC-14")
+
+(provide 'asavonic-appearance)
