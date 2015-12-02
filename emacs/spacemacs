@@ -43,12 +43,16 @@
      '((colors :variables
                colors-enable-nyan-cat-progress-bar ,(display-graphic-p)))
      eyebrowse ;; tiling-wm behaviour
+
+     ;; private layers
+     abuild
+     local
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(blank-mode)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -174,25 +178,13 @@ layers configuration."
             (lambda ()
               ;; quick compilation
               (setq company-backends '(company-files (company-clang company-semantic)))
-              (global-set-key (kbd "<spc> o =") 'clang-format-region)
               (setq company-clang-arguments '("-std=c++11"))
               (setq flycheck-clang-language-standard "c++11")
               (setq c-basic-offset 4)
               ))
 
   (global-hl-line-mode 0)
-
   (setq flycheck-scalastyle-jar "~/.emacs.d/private/scala/scalastyle_2.11-0.6.0.jar")
-
-  (setq c-default-style "stroustrup"
-        c-basic-offset 4)
-
-
-  ;; void foo()
-  ;; {
-  ;;     some code();
-  ;; }
-  (c-set-offset 'inline-open '0)
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
