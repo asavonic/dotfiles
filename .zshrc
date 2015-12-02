@@ -93,6 +93,8 @@ export PATH=$COCOS_TEMPLATES_ROOT:$PATH
 export ANT_ROOT=/usr/bin
 export PATH=$ANT_ROOT:$PATH
 
+unset LESS
+
 SSH_ENV=$HOME/.ssh/environment
 
 # start the ssh-agent
